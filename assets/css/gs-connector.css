@@ -92,7 +92,7 @@ debug-clear {
    padding-bottom: 10px;
 }
 .gs-fields input {
-   width: 173px;
+   width: auto;
 }
 .gs-parts{
    display: flex;

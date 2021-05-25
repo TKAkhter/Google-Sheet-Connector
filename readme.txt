@@ -1,7 +1,7 @@
 === CF7 Google Sheets Connector ===
 Contributors: westerndeal
 Donate link: https://www.paypal.me/WesternDeal
-Author URL: https://www.gsheetconnector.com/
+Author URL: https://thedigitz.com/
 Tags: cf7, contact form 7, Contact Form 7 Integrations, contact forms, Google Sheets, Google Sheets Integrations, Google, Sheets
 Requires at least: 3.6
 Tested up to: 5.6.1
@@ -13,18 +13,18 @@ Send your Contact Form 7 data directly to your Google Sheets spreadsheet.
 
 == Description ==
 
-[Homepage](https://www.gsheetconnector.com/) | [Documentation](https://www.gsheetconnector.com/docs) | [Support](https://www.gsheetconnector.com/support) | [Demo](https://cf7demo.gsheetconnector.com/) | [Premium Version](https://www.gsheetconnector.com/cf7-google-sheet-connector-pro?wp-repo)
+[Homepage](https://thedigitz.com/) | [Documentation](https://thedigitz.com/) | [Support](https://thedigitz.com/) | [Demo](https://thedigitz.com/) | [Premium Version](https://thedigitz.com/)
 
 This plugin is a bridge between your [WordPress](https://wordpress.org/) [Contact Form 7](https://wordpress.org/plugins/contact-form-7/) forms and [Google Sheets](https://www.google.com/sheets/about/).
 
 When a visitor submits his/her data on your website via a Contact Form 7 form, upon form submission, such data are also sent to Google Sheets.
 
-Get rid of making mistakes while adding the sheet settings or adding the headers ( Mail Tags ) to the sheet column. We have Launched the <a href="https://www.gsheetconnector.com/cf7-google-sheet-connector-pro?wp-repo" target="_blank">Googlesheet Connector PRO version</a> with more automated features.
+Get rid of making mistakes while adding the sheet settings or adding the headers ( Mail Tags ) to the sheet column. We have Launched the <a href="https://thedigitz.com/" target="_blank">Googlesheet Connector PRO version</a> with more automated features.
 
-= Still haven't purchased ? <a href="https://www.gsheetconnector.com/cf7-google-sheet-connector-pro?wp-repo" target="_blank">Get it Now</a> =
+= Still haven't purchased ? <a href="https://thedigitz.com/" target="_blank">Get it Now</a> =
 
 = Check Live Demo =
-Demo URL:&nbsp;<a href="https://cf7demo.gsheetconnector.com/" target="_blank">https://cf7demo.gsheetconnector.com/</a>
+Demo URL:&nbsp;<a href="https://thedigitz.com/" target="_blank">https://thedigitz.com/</a>
 
 Google Sheet URL to Check submitted Data<br><a href="https://docs.google.com/spreadsheets/d/1ooBdX0cgtk155ww9MmdMTw8kDavIy5J1m76VwSrcTSs/" target="_blank">https://docs.google.com/spreadsheets/d/1ooBdX0cgtk155ww9MmdMTw8kDavIy5J1m76VwSrcTSs/</a>
 
