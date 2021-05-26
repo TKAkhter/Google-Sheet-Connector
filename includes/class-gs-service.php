@@ -430,10 +430,13 @@ class Gs_Connector_Service
                 foreach ($value as $k => $v) {
                     $saved_val = "";
                     $checked = '';
-                    if (isset($form_data[0][$v.'-tick'])) :
+                    $disabled = '';
+                    if (isset($form_data[0][$v.'-tick'])) {
                            $saved_val = $saved_mail_tags[0][$v];
                            $checked = "checked";
-                    endif;
+                    } else {
+                        $disabled = 'disabled';
+                    }
             
                     $placeholder = preg_replace('/[\\_]|\\s+/', '-', $v);
                     ?>
@@ -444,8 +447,8 @@ class Gs_Connector_Service
                     <?php echo $v; ?> :
     </td>
 
-    <td>
-      <input type="text" id="gs-<?php echo $v; ?>" name="cf7-gs[<?php echo $v; ?>]"
+    <td class="gs-r-pad">
+      <input type="text" id="gs-<?php echo $v; ?>" <?php echo $disabled; ?> name="cf7-gs[<?php echo $v; ?>]"
         value="<?php echo ( isset($form_data[0][$v]) ) ? esc_attr($form_data[0][$v]) : ''; ?>"
         placeholder="<?php echo $placeholder; ?>">
     </td>
@@ -494,7 +497,7 @@ class Gs_Connector_Service
     * Function - display contact form special mail tags to be mapped to google sheet
     * @since 2.6
     */
-    public function display_form_special_tags($form_id)
+    public function display_form_special_tags($form_id, $form_data)
     {
       
      
@@ -512,16 +515,35 @@ class Gs_Connector_Service
             if ($i == $tags_count) {
                 break;
             }
+            $checked = '';
+            $disabled = '';
             $tag_name = $this->special_mail_tags[ $i ];
+
+            if (isset($form_data[0][$tag_name.'-tick'])) {
+                   $checked = "checked";
+            } else {
+                $disabled = 'disabled';
+            }
                            
             $placeholder = str_replace('_', '-', $tag_name);
+
+            if (isset($form_data[0][$tag_name]) && array_key_exists($tag_name.'-tick', $form_data[0])) {
+                    $tag_value = esc_attr($form_data[0][$tag_name]);
+            } /*elseif (!array_key_exists($tag_name.'-tick', $form_data[0])) {
+                    $tag_value = '';
+                    unset($form_data[0][$tag_name]);
+            }*/ else {
+                    $tag_value = '';
+                    unset($form_data[0][$tag_name]);
+}
+            // $tag_value = isset($form_data[0][$tag_name]) ? esc_attr($form_data[0][$tag_name]) : '';
             echo '<tr>';
-            echo '<td><input type="checkbox" name="gs-st-ck['. $i . ']" value="1"></td>';
+            echo '<td><input type="checkbox" name="cf7-gs['.$tag_name.'-tick]" id="gs-'.$tag_name.'-tick" value="1" '.$checked.'></td>';
             echo '<td class="special-tags">[_' . $tag_name . '] </td>';
-            echo '<td class="gs-r-pad"><input type="text" class="name-field" name="gs-st-custom-header['. $i . ']" value="" placeholder="'. $placeholder .'"> </td>';
-            if ($i % $num_of_cols == 1) {
-                 echo '</tr><tr>';
-            }
+            echo '<td class="gs-r-pad"><input type="text" class="name-field" name="cf7-gs['. $tag_name . ']" value="'.$tag_value.'" placeholder="'. $placeholder .'" '.$disabled.'> </td>';
+if ($i % $num_of_cols == 1) {
+     echo '</tr><tr>';
+}
         }
         ?>
 </table>
