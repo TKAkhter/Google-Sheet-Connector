@@ -204,31 +204,32 @@ class Gs_Connector_Service
                 
                     $meta[$smt] = apply_filters('wpcf7_special_mail_tags', '', $tagname, false, $mail_tag);
                 }
+                $meta_data = $form_data[0];
 
-                if (! empty($meta)) {
-                    $data["date"] = $meta["date"];
-                    $data["time"] = $meta["time"];
-                    $data["serial-number"] = $meta["serial_number"];
-                    $data["remote-ip"] = $meta["remote_ip"];
-                    $data["user-agent"] = $meta["user_agent"];
-                    $data["url"] = $meta["url"];
-                    $data["post-id"] = $meta["post_id"];
-                    $data["post-name"] = $meta["post_name"];
-                    $data["post-title"] = $meta["post_title"];
-                    $data["post-url"] = $meta["post_url"];
-                    $data["post-author"] = $meta["post_author"];
-                    $data["post-author-email"] = $meta["post_author_email"];
-                    $data["site-title"] = $meta["site_title"];
-                    $data["site-description"] = $meta["site_description"];
-                    $data["site-url"] = $meta["site_url"];
-                    $data["site-admin-email"] = $meta["site_admin_email"];
-                    $data["user-login"] = $meta["user_login"];
-                    $data["user-email"] = $meta["user_email"];
-                    $data["user-url"] = $meta["user_url"];
-                    $data["user-first-name"] = $meta["user_first_name"];
-                    $data["user-last-name"] = $meta["user_last_name"];
-                    $data["user-nickname"] = $meta["user_nickname"];
-                    $data["user-display-name"] = $meta["user_display_name"];
+                if (! empty($meta_data)) {
+                    $data["date"] = array_key_exists("date", $meta_data) ? $meta["date"] : '';
+                    $data["time"] = array_key_exists("time", $meta_data) ? $meta["time"] : '';
+                    $data["serial-number"] = array_key_exists("serial_number", $meta_data) ? $meta["serial_number"] : '';
+                    $data["remote-ip"] = array_key_exists("remote_ip", $meta_data) ? $meta["remote_ip"] : '';
+                    $data["user-agent"] = array_key_exists("user_agent", $meta_data) ? $meta["user_agent"] : '';
+                    $data["url"] = array_key_exists("url", $meta_data) ? $meta["url"] : '';
+                    $data["post-id"] = array_key_exists("post_id", $meta_data) ? $meta["post_id"] : '';
+                    $data["post-name"] = array_key_exists("post_name", $meta_data) ? $meta["post_name"] : '';
+                    $data["post-title"] = array_key_exists("post_title", $meta_data) ? $meta["post_title"] : '';
+                    $data["post-url"] = array_key_exists("post_url", $meta_data) ? $meta["post_url"] : '';
+                    $data["post-author"] = array_key_exists("post_author", $meta_data) ? $meta["post_author"] : '';
+                    $data["post-author-email"] = array_key_exists("post_author_email", $meta_data) ? $meta["post_author_email"] : '';
+                    $data["site-title"] = array_key_exists("site_title", $meta_data) ? $meta["site_title"] : '';
+                    $data["site-description"] = array_key_exists("site_description", $meta_data) ? $meta["site_description"] : '';
+                    $data["site-url"] = array_key_exists("site_url", $meta_data) ? $meta["site_url"] : '';
+                    $data["site-admin-email"] = array_key_exists("site_admin_email", $meta_data) ? $meta["site_admin_email"] : '';
+                    $data["user-login"] = array_key_exists("user_login", $meta_data) ? $meta["user_login"] : '';
+                    $data["user-email"] = array_key_exists("user_email", $meta_data) ? $meta["user_email"] : '';
+                    $data["user-url"] = array_key_exists("user_url", $meta_data) ? $meta["user_url"] : '';
+                    $data["user-first-name"] = array_key_exists("user_first_name", $meta_data) ? $meta["user_first_name"] : '';
+                    $data["user-last-name"] = array_key_exists("user_last_name", $meta_data) ? $meta["user_last_name"] : '';
+                    $data["user-nickname"] = array_key_exists("user_nickname", $meta_data) ? $meta["user_nickname"] : '';
+                    $data["user-display-name"] = array_key_exists("user_display_name", $meta_data) ? $meta["user_display_name"] : '';
                 }
 
                 foreach ($posted_data as $key => $value) {
@@ -269,7 +270,7 @@ class Gs_Connector_Service
     {
         $form_id = sanitize_text_field($_GET['post']);
         $form_data = get_post_meta($form_id, 'gs_settings');
-        echo '<pre>'.print_r($form_data, true).'</pre>';
+        // echo '<pre>'.print_r($form_data, true).'</pre>';
         ?>
         <form method="post">
           <div class="gs-fields">
