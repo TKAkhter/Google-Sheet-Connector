@@ -163,9 +163,9 @@ class Gs_Connector_Service
         include_once(GS_CONNECTOR_ROOT . "/lib/google-sheets.php");
         $doc = new cf7gsc_googlesheet();
         $doc->auth();
-        $worksheetCell = $service->spreadsheets_values->get($spreadsheetId, $worksheet_id . "!1:1");
         $doc->setSpreadsheetId($sheet_data['sheet-id']);
         $doc->setWorkTabId($sheet_data['tab-id']);
+        // $worksheetCell = $service->spreadsheets_values->get($spreadsheetId, $worksheet_id . "!1:1");
         $doc->add_header($sheet_data['sheetname'], $sheet_data['sheet-tab-name'], $final_header_array, $final_header_array);
     }
    
