@@ -135,6 +135,38 @@ class Gs_Connector_Service
         );
         $sheet_data = isset($_POST['cf7-gs']) ? $_POST['cf7-gs'] : $default;
         update_post_meta($post->id(), 'gs_settings', $sheet_data);
+
+        $form_id = sanitize_text_field($_GET['post']);
+
+        $assoc_arr = [];
+        $meta = get_post_meta($form_id, '_form', true);
+        $fields = $this->get_contact_form_fields($meta);
+
+        if ($fields) {
+            foreach ($fields as $field) {
+                $single = $this->get_field_assoc($field);
+                if ($single) {
+                    $assoc_arr[] = $single;
+                }
+            }
+        }foreach ($assoc_arr as $key => $value) {
+          // echo '<pre>'.print_r($key,TRUE).'</pre>';
+          foreach ($value as $assoc_arr_key => $assoc_arr_value) {
+            // echo '<pre>'.print_r($assoc_arr_key,TRUE).'</pre>';
+            // echo '<pre>'.print_r($assoc_arr_value,TRUE).'</pre>';
+            $final_header_array[] = $assoc_arr_value;
+          }
+        }
+        // echo '<pre>'.print_r($final_header_array,TRUE).'</pre>';
+        // die(); 
+        // echo '<pre>'.print_r($sheet_data['tab-id'],TRUE).'</pre>';
+        include_once(GS_CONNECTOR_ROOT . "/lib/google-sheets.php");
+        $doc = new cf7gsc_googlesheet();
+        $doc->auth();
+        $doc->setSpreadsheetId($sheet_data['sheet-id']);
+        $doc->setWorkTabId($sheet_data['tab-id']);
+        // $worksheetCell = $service->spreadsheets_values->get($spreadsheetId, $worksheet_id . "!1:1");
+        $doc->add_header($sheet_data['sheetname'], $sheet_data['sheet-tab-name'], $final_header_array, $final_header_array);
     }
    
    /**
@@ -204,31 +236,32 @@ class Gs_Connector_Service
                 
                     $meta[$smt] = apply_filters('wpcf7_special_mail_tags', '', $tagname, false, $mail_tag);
                 }
+                $meta_data = $form_data[0];
 
-                if (! empty($meta)) {
-                    $data["date"] = $meta["date"];
-                    $data["time"] = $meta["time"];
-                    $data["serial-number"] = $meta["serial_number"];
-                    $data["remote-ip"] = $meta["remote_ip"];
-                    $data["user-agent"] = $meta["user_agent"];
-                    $data["url"] = $meta["url"];
-                    $data["post-id"] = $meta["post_id"];
-                    $data["post-name"] = $meta["post_name"];
-                    $data["post-title"] = $meta["post_title"];
-                    $data["post-url"] = $meta["post_url"];
-                    $data["post-author"] = $meta["post_author"];
-                    $data["post-author-email"] = $meta["post_author_email"];
-                    $data["site-title"] = $meta["site_title"];
-                    $data["site-description"] = $meta["site_description"];
-                    $data["site-url"] = $meta["site_url"];
-                    $data["site-admin-email"] = $meta["site_admin_email"];
-                    $data["user-login"] = $meta["user_login"];
-                    $data["user-email"] = $meta["user_email"];
-                    $data["user-url"] = $meta["user_url"];
-                    $data["user-first-name"] = $meta["user_first_name"];
-                    $data["user-last-name"] = $meta["user_last_name"];
-                    $data["user-nickname"] = $meta["user_nickname"];
-                    $data["user-display-name"] = $meta["user_display_name"];
+                if (! empty($meta_data)) {
+                    $data["date"] = array_key_exists("date", $meta_data) ? $meta["date"] : '';
+                    $data["time"] = array_key_exists("time", $meta_data) ? $meta["time"] : '';
+                    $data["serial-number"] = array_key_exists("serial_number", $meta_data) ? $meta["serial_number"] : '';
+                    $data["remote-ip"] = array_key_exists("remote_ip", $meta_data) ? $meta["remote_ip"] : '';
+                    $data["user-agent"] = array_key_exists("user_agent", $meta_data) ? $meta["user_agent"] : '';
+                    $data["url"] = array_key_exists("url", $meta_data) ? $meta["url"] : '';
+                    $data["post-id"] = array_key_exists("post_id", $meta_data) ? $meta["post_id"] : '';
+                    $data["post-name"] = array_key_exists("post_name", $meta_data) ? $meta["post_name"] : '';
+                    $data["post-title"] = array_key_exists("post_title", $meta_data) ? $meta["post_title"] : '';
+                    $data["post-url"] = array_key_exists("post_url", $meta_data) ? $meta["post_url"] : '';
+                    $data["post-author"] = array_key_exists("post_author", $meta_data) ? $meta["post_author"] : '';
+                    $data["post-author-email"] = array_key_exists("post_author_email", $meta_data) ? $meta["post_author_email"] : '';
+                    $data["site-title"] = array_key_exists("site_title", $meta_data) ? $meta["site_title"] : '';
+                    $data["site-description"] = array_key_exists("site_description", $meta_data) ? $meta["site_description"] : '';
+                    $data["site-url"] = array_key_exists("site_url", $meta_data) ? $meta["site_url"] : '';
+                    $data["site-admin-email"] = array_key_exists("site_admin_email", $meta_data) ? $meta["site_admin_email"] : '';
+                    $data["user-login"] = array_key_exists("user_login", $meta_data) ? $meta["user_login"] : '';
+                    $data["user-email"] = array_key_exists("user_email", $meta_data) ? $meta["user_email"] : '';
+                    $data["user-url"] = array_key_exists("user_url", $meta_data) ? $meta["user_url"] : '';
+                    $data["user-first-name"] = array_key_exists("user_first_name", $meta_data) ? $meta["user_first_name"] : '';
+                    $data["user-last-name"] = array_key_exists("user_last_name", $meta_data) ? $meta["user_last_name"] : '';
+                    $data["user-nickname"] = array_key_exists("user_nickname", $meta_data) ? $meta["user_nickname"] : '';
+                    $data["user-display-name"] = array_key_exists("user_display_name", $meta_data) ? $meta["user_display_name"] : '';
                 }
 
                 foreach ($posted_data as $key => $value) {
@@ -357,7 +390,7 @@ class Gs_Connector_Service
                 </li>
               </ul>
             </div>
-            <div class="cd-faq-items">
+            <!-- <div class="cd-faq-items">
               <ul id="basics" class="cd-faq-group">
                 <li class="content-visible">
                   <a class="cd-faq-trigger" href="#0">
@@ -366,88 +399,6 @@ class Gs_Connector_Service
                   <div class="cd-faq-content" style="display: block;">
                     <div class="gs-demo-fields gs-third-block">
                       <?php $this->display_form_custom_tag($form_id); ?>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <!-- <div class="cd-faq-items">
-              <ul id="basics" class="cd-faq-group">
-                <li class="content-visible">
-                  <a class="cd-faq-trigger" href="#0">
-                    <?php echo esc_html(__('Custom Ordering - ', 'gsconnector')); ?>
-                  </a>
-
-                  <div class="cd-faq-content" style="display: block;">
-                    <div class="gs-demo-fields gs-second-block">
-                      <h2><span class="gs-info">
-                          <?php echo esc_html(__('Not showing correct header name ? Un-select and select the fields checkbox again. It happens due to various reasons like change in field/mail tag name.', 'gsconnector')); ?>
-                        </span></h2>
-
-                      <ul class="connected-sortable droppable-area1" id="drag">
-                        <?Php    $count = 0; ?>
-                        <div class="drag-item">
-                          <li class="draggable-item">
-                            <?php echo ""; ?><input type="hidden" data-count="<?php echo $count; ?>"
-                              name="gs-drag-index[<?php echo $count; ?>]" id="gs-drag-drop"
-                              value="<?php echo ""; ?>">
-                          </li>
-                        </div>
-                        <?php
-                        $count++;
-                        ?>
-                      </ul>
-
-                      <?php $saved_mail_tags = get_post_meta($form_id, 'gs_map_mail_tags');
-                            
-                      // fetch mail tags
-                        $assoc_arr = [ ];
-                        $meta = get_post_meta($form_id, '_form', true);
-                        $fields = $this->get_contact_form_fields($meta);
-                        if ($fields) {
-                            foreach ($fields as $field) {
-                                $single = $this->get_field_assoc($field);
-                                if ($single) {
-                                                  $assoc_arr[] = $single;
-                                }
-                            }
-                        }
-    
-                        if (! empty($assoc_arr)) {
-                            ?>
-                      <table class="gs-field-list">
-                            <?php
-                            $count = 0;
-                            foreach ($assoc_arr as $key => $value) {
-                                foreach ($value as $k => $v) {
-                                    $saved_val = "";
-                                    $checked = "";
-                                    if (! empty($saved_mail_tags) && array_key_exists($v, $saved_mail_tags[0])) :
-                                          $saved_val = $saved_mail_tags[0][$v];
-                                          $checked = "checked";
-                                    endif;
-      
-                                    $placeholder = preg_replace('/[\\_]|\\s+/', '-', $v);
-                                    ?>
-                        <tr>
-                          <td><input type="checkbox" checked="checked"
-                              name="gs-custom-ck[<?php echo $count; ?>]" value="1" <?php echo $checked; ?>
-                            ></td>
-                          <td>
-                                    <?php echo $v; ?> :
-                          </td>
-                          <td>
-                            <input type="text" name="gs-custom-header[<?php echo $count; ?>]"
-                              value="<?php echo $saved_val; ?>" placeholder="<?php echo $placeholder; ?>">
-                          </td>
-                        </tr>
-                                    <?php
-                                    $count++;
-                                }
-                            }
-                        }
-                        ?>
-                      </table>
                     </div>
                   </div>
                 </li>
@@ -489,11 +440,14 @@ class Gs_Connector_Service
         <?php
        // fetch saved fields
         $saved_mail_tags = get_post_meta($form_id, 'gs_map_mail_tags');
-      
+      // echo '<pre>'.print_r($form_data,TRUE).'</pre>';
+
+      // echo '<pre>'.print_r($saved_mail_tags,TRUE).'</pre>';      
        // fetch mail tags
         $assoc_arr = [];
         $meta = get_post_meta($form_id, '_form', true);
         $fields = $this->get_contact_form_fields($meta);
+
         if ($fields) {
             foreach ($fields as $field) {
                 $single = $this->get_field_assoc($field);
@@ -502,7 +456,7 @@ class Gs_Connector_Service
                 }
             }
         }
-      
+        // echo '<pre>'.print_r($assoc_arr,TRUE).'</pre>'; 
         if (! empty($assoc_arr)) {
             ?>
 <table class="gs-field-list">
@@ -512,12 +466,22 @@ class Gs_Connector_Service
                 foreach ($value as $k => $v) {
                     $saved_val = "";
                     $checked = '';
-                    if (isset($form_data[0][$v.'-tick'])) :
+                    $disabled = '';
+                    $saved_val_field = 'test';
+                    if (isset($form_data[0][$v.'-tick'])) {
                            $saved_val = $saved_mail_tags[0][$v];
                            $checked = "checked";
-                    endif;
+                    } else {
+                        $disabled =  'disabled';
+                    }
             
                     $placeholder = preg_replace('/[\\_]|\\s+/', '-', $v);
+                    if (isset($form_data[0][$v])) {
+                           $saved_val_field = $saved_mail_tags[0][$v];
+                    } else {
+                        $saved_val_field =  $placeholder;
+                    }
+
                     ?>
   <tr>
     <td><input type="checkbox" name="cf7-gs[<?php echo $v; ?>-tick]" id="gs-<?php echo $v; ?>-tick" value="1" <?php
@@ -526,9 +490,9 @@ class Gs_Connector_Service
                     <?php echo $v; ?> :
     </td>
 
-    <td>
-      <input type="text" id="gs-<?php echo $v; ?>" name="cf7-gs[<?php echo $v; ?>]"
-        value="<?php echo ( isset($form_data[0][$v]) ) ? esc_attr($form_data[0][$v]) : ''; ?>"
+    <td class="gs-r-pad">
+      <input type="text" id="gs-<?php echo $v; ?>" <?php echo $disabled; ?> name="cf7-gs[<?php echo $v; ?>]"
+        value="<?php echo $saved_val_field ?>"
         placeholder="<?php echo $placeholder; ?>">
     </td>
   </tr>
@@ -576,7 +540,7 @@ class Gs_Connector_Service
     * Function - display contact form special mail tags to be mapped to google sheet
     * @since 2.6
     */
-    public function display_form_special_tags($form_id)
+    public function display_form_special_tags($form_id, $form_data)
     {
       
      
@@ -594,16 +558,35 @@ class Gs_Connector_Service
             if ($i == $tags_count) {
                 break;
             }
+            $checked = '';
+            $disabled = '';
             $tag_name = $this->special_mail_tags[ $i ];
+
+            if (isset($form_data[0][$tag_name.'-tick'])) {
+                   $checked = "checked";
+            } else {
+                $disabled = 'disabled';
+            }
                            
             $placeholder = str_replace('_', '-', $tag_name);
+
+            if (isset($form_data[0][$tag_name]) && array_key_exists($tag_name.'-tick', $form_data[0])) {
+                    $tag_value = esc_attr($form_data[0][$tag_name]);
+            } /*elseif (!array_key_exists($tag_name.'-tick', $form_data[0])) {
+                    $tag_value = '';
+                    unset($form_data[0][$tag_name]);
+            }*/ else {
+                    $tag_value = $placeholder;
+                    unset($form_data[0][$tag_name]);
+}
+            // $tag_value = isset($form_data[0][$tag_name]) ? esc_attr($form_data[0][$tag_name]) : '';
             echo '<tr>';
-            echo '<td><input type="checkbox" name="gs-st-ck['. $i . ']" value="1"></td>';
+            echo '<td><input type="checkbox" name="cf7-gs['.$tag_name.'-tick]" id="gs-'.$tag_name.'-tick" value="1" '.$checked.'></td>';
             echo '<td class="special-tags">[_' . $tag_name . '] </td>';
-            echo '<td class="gs-r-pad"><input type="text" class="name-field" name="gs-st-custom-header['. $i . ']" value="" placeholder="'. $placeholder .'"> </td>';
-            if ($i % $num_of_cols == 1) {
-                 echo '</tr><tr>';
-            }
+            echo '<td class="gs-r-pad"><input type="text" class="name-field" name="cf7-gs['. $tag_name . ']" value="'.$tag_value.'" placeholder="'. $placeholder .'" '.$disabled.'> </td>';
+if ($i % $num_of_cols == 1) {
+     echo '</tr><tr>';
+}
         }
         ?>
 </table>

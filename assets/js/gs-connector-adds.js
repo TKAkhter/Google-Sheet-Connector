@@ -57,5 +57,20 @@ jQuery(document).ready(function() {
         jQuery(this).siblings('.cd-faq-content').toggle('fast');
     });
 
+    //checkbox disabled input field
+    jQuery(".gs-fields input[type=checkbox]").click(function() {
+        jQuery(this).parent('li').toggleClass('content-visible content-hide');
+        jQuery(this).siblings('.cd-faq-content').toggle('fast');
+    });
 
+    jQuery(".gs-fields input[type=checkbox]").click(function() {
+        var inputField = jQuery(this).parent('td').siblings('.gs-r-pad').children('input'); 
+        console.log(jQuery(this));
+        if (this.checked) {
+            inputField.prop('disabled', false);
+        }else {
+            inputField.prop('disabled', true);
+        }
+    });
 });
+// jQuery(this).parent('td').siblings('.gs-r-pad').children('input')
