@@ -135,6 +135,38 @@ class Gs_Connector_Service
         );
         $sheet_data = isset($_POST['cf7-gs']) ? $_POST['cf7-gs'] : $default;
         update_post_meta($post->id(), 'gs_settings', $sheet_data);
+
+        $form_id = sanitize_text_field($_GET['post']);
+
+        $assoc_arr = [];
+        $meta = get_post_meta($form_id, '_form', true);
+        $fields = $this->get_contact_form_fields($meta);
+
+        if ($fields) {
+            foreach ($fields as $field) {
+                $single = $this->get_field_assoc($field);
+                if ($single) {
+                    $assoc_arr[] = $single;
+                }
+            }
+        }foreach ($assoc_arr as $key => $value) {
+          // echo '<pre>'.print_r($key,TRUE).'</pre>';
+          foreach ($value as $assoc_arr_key => $assoc_arr_value) {
+            // echo '<pre>'.print_r($assoc_arr_key,TRUE).'</pre>';
+            // echo '<pre>'.print_r($assoc_arr_value,TRUE).'</pre>';
+            $final_header_array[] = $assoc_arr_value;
+          }
+        }
+        // echo '<pre>'.print_r($final_header_array,TRUE).'</pre>';
+        // die(); 
+        // echo '<pre>'.print_r($sheet_data['tab-id'],TRUE).'</pre>';
+        include_once(GS_CONNECTOR_ROOT . "/lib/google-sheets.php");
+        $doc = new cf7gsc_googlesheet();
+        $doc->auth();
+        $worksheetCell = $service->spreadsheets_values->get($spreadsheetId, $worksheet_id . "!1:1");
+        $doc->setSpreadsheetId($sheet_data['sheet-id']);
+        $doc->setWorkTabId($sheet_data['tab-id']);
+        $doc->add_header($sheet_data['sheetname'], $sheet_data['sheet-tab-name'], $final_header_array, $final_header_array);
     }
    
    /**
@@ -408,11 +440,14 @@ class Gs_Connector_Service
         <?php
        // fetch saved fields
         $saved_mail_tags = get_post_meta($form_id, 'gs_map_mail_tags');
-      
+      // echo '<pre>'.print_r($form_data,TRUE).'</pre>';
+
+      // echo '<pre>'.print_r($saved_mail_tags,TRUE).'</pre>';      
        // fetch mail tags
         $assoc_arr = [];
         $meta = get_post_meta($form_id, '_form', true);
         $fields = $this->get_contact_form_fields($meta);
+
         if ($fields) {
             foreach ($fields as $field) {
                 $single = $this->get_field_assoc($field);
@@ -421,7 +456,7 @@ class Gs_Connector_Service
                 }
             }
         }
-      
+        // echo '<pre>'.print_r($assoc_arr,TRUE).'</pre>'; 
         if (! empty($assoc_arr)) {
             ?>
 <table class="gs-field-list">
@@ -432,14 +467,21 @@ class Gs_Connector_Service
                     $saved_val = "";
                     $checked = '';
                     $disabled = '';
+                    $saved_val_field = 'test';
                     if (isset($form_data[0][$v.'-tick'])) {
                            $saved_val = $saved_mail_tags[0][$v];
                            $checked = "checked";
                     } else {
-                        $disabled = 'disabled';
+                        $disabled =  'disabled';
                     }
             
                     $placeholder = preg_replace('/[\\_]|\\s+/', '-', $v);
+                    if (isset($form_data[0][$v])) {
+                           $saved_val_field = $saved_mail_tags[0][$v];
+                    } else {
+                        $saved_val_field =  $placeholder;
+                    }
+
                     ?>
   <tr>
     <td><input type="checkbox" name="cf7-gs[<?php echo $v; ?>-tick]" id="gs-<?php echo $v; ?>-tick" value="1" <?php
@@ -450,7 +492,7 @@ class Gs_Connector_Service
 
     <td class="gs-r-pad">
       <input type="text" id="gs-<?php echo $v; ?>" <?php echo $disabled; ?> name="cf7-gs[<?php echo $v; ?>]"
-        value="<?php echo ( isset($form_data[0][$v]) ) ? esc_attr($form_data[0][$v]) : ''; ?>"
+        value="<?php echo $saved_val_field ?>"
         placeholder="<?php echo $placeholder; ?>">
     </td>
   </tr>
@@ -534,7 +576,7 @@ class Gs_Connector_Service
                     $tag_value = '';
                     unset($form_data[0][$tag_name]);
             }*/ else {
-                    $tag_value = '';
+                    $tag_value = $placeholder;
                     unset($form_data[0][$tag_name]);
 }
             // $tag_value = isset($form_data[0][$tag_name]) ? esc_attr($form_data[0][$tag_name]) : '';

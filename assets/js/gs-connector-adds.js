@@ -73,4 +73,4 @@ jQuery(document).ready(function() {
         }
     });
 });
-jQuery(this).parent('td').siblings('.gs-r-pad').children('input')
+// jQuery(this).parent('td').siblings('.gs-r-pad').children('input')
