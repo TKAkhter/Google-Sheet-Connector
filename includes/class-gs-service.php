@@ -383,9 +383,10 @@ class Gs_Connector_Service
                   <div class="cd-faq-content" style="display: block;">
                     <div class="gs-demo-fields gs-second-block">
                       <h2>
-                        <!-- <span class="gs-info"> -->
+                        <span class="gs-info">
+                          <?php echo esc_html(__('Enable/Disable mail tags and save automatically to google sheet. ', 'gsconnector')); ?>
                           <!-- <?php echo esc_html(__('Map mail tags with custom header name and save automatically to google sheet. ', 'gsconnector')); ?> -->
-                        <!-- </span> -->
+                        </span>
                       </h2>
                       <?php $this->display_form_fields($form_id, $form_data); ?>
                     </div>
@@ -564,9 +565,10 @@ class Gs_Connector_Service
         $num_of_cols = 1;
         ?>
 <h2>
-  <!-- <span class="gs-info"> -->
+  <span class="gs-info">
+    <?php echo esc_html(__('Enable/Disable special mail tags and save automatically to google sheet. ', 'gsconnector')); ?>
         <!-- <?php echo esc_html(__('Map special mail tags with custom header name and save automatically to google sheet. ', 'gsconnector')); ?> -->
-  <!-- </span> -->
+  </span>
 </h2>
 <table class="gs-field-list special">
         <?php

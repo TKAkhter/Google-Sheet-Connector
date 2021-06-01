@@ -343,9 +343,6 @@ input:disabled {
 table.gs-field-list {
     margin-left: 30px;
 }
-table.gs-field-list.special {
-    margin: 0px;
-}
 td.gs-r-pad {
     padding-right: 10px;
 }
@@ -356,4 +353,7 @@ td.gs-r-pad {
 
 input[type="checkbox"] {
     background-color: rgb(235, 235, 228) !important;
+}
+.cd-faq-items input[type=text] {
+    display: none;
 }
