@@ -17,7 +17,9 @@ class Gs_Connector_Service
 
     private $allowed_tags = array( 'text', 'email', 'url', 'tel', 'number', 'range', 'date', 'textarea', 'select', 'checkbox', 'radio', 'acceptance', 'quiz', 'file', 'hidden' );
 
-    private $special_mail_tags = array( 'date', 'time', 'serial_number', 'remote_ip', 'user_agent', 'url', 'post_id', 'post_name', 'post_title', 'post_url', 'post_author', 'post_author_email', 'site_title', 'site_description', 'site_url', 'site_admin_email', 'user_login', 'user_email', 'user_display_name' );
+    // private $special_mail_tags = array( 'date', 'time', 'serial_number', 'remote_ip', 'user_agent', 'url', 'post_id', 'post_name', 'post_title', 'post_url', 'post_author', 'post_author_email', 'site_title', 'site_description', 'site_url', 'site_admin_email', 'user_login', 'user_email', 'user_display_name' );
+
+    private $special_mail_tags = array( 'date', 'time', 'url', 'post_url' );
     
     protected $gs_uploads   = array();
    
@@ -141,6 +143,7 @@ class Gs_Connector_Service
         $assoc_arr = [];
         $meta = get_post_meta($form_id, '_form', true);
         $fields = $this->get_contact_form_fields($meta);
+        $saved_mail_tags = get_post_meta($form_id, 'gs_map_mail_tags');
 
         if ($fields) {
             foreach ($fields as $field) {
@@ -158,15 +161,27 @@ class Gs_Connector_Service
           }
         }
         // echo '<pre>'.print_r($final_header_array,TRUE).'</pre>';
-        // die(); 
-        // echo '<pre>'.print_r($sheet_data['tab-id'],TRUE).'</pre>';
+        // echo '<pre>'.print_r($sheet_data,TRUE).'</pre>';
+        $final_header_array = $sheet_data;
+        $i = 0;
+        foreach ($final_header_array as $final_header_array_key => $final_header_array_value) {
+          if($i < 4 || $final_header_array_value == 1) {
+              unset($final_header_array[$final_header_array_key]);
+          }
+          $i++;
+        }
+        // echo '<pre>'.print_r($sheet_data,TRUE).'</pre>';
+        // echo '<pre>'.print_r($final_header_array,TRUE).'</pre>';
+        // die();
         include_once(GS_CONNECTOR_ROOT . "/lib/google-sheets.php");
         $doc = new cf7gsc_googlesheet();
         $doc->auth();
         $doc->setSpreadsheetId($sheet_data['sheet-id']);
         $doc->setWorkTabId($sheet_data['tab-id']);
-        // $worksheetCell = $service->spreadsheets_values->get($spreadsheetId, $worksheet_id . "!1:1");
-        $doc->add_header($sheet_data['sheetname'], $sheet_data['sheet-tab-name'], $final_header_array, $final_header_array);
+        // $worksheetCell = $service->spreadsheets_values->get($spreadsheetId, $worksheet_id . "!1:1"); 
+        if(!empty($sheet_data['sheet-id'])) {
+          $doc->add_header($sheet_data['sheetname'], $sheet_data['sheet-tab-name'], $final_header_array, $final_header_array);
+        } 
     }
    
    /**
@@ -367,9 +382,11 @@ class Gs_Connector_Service
                   </a>
                   <div class="cd-faq-content" style="display: block;">
                     <div class="gs-demo-fields gs-second-block">
-                      <h2><span class="gs-info">
-                          <?php echo esc_html(__('Map mail tags with custom header name and save automatically to google sheet. ', 'gsconnector')); ?>
-                        </span></h2>
+                      <h2>
+                        <!-- <span class="gs-info"> -->
+                          <!-- <?php echo esc_html(__('Map mail tags with custom header name and save automatically to google sheet. ', 'gsconnector')); ?> -->
+                        <!-- </span> -->
+                      </h2>
                       <?php $this->display_form_fields($form_id, $form_data); ?>
                     </div>
                   </div>
@@ -466,18 +483,16 @@ class Gs_Connector_Service
                 foreach ($value as $k => $v) {
                     $saved_val = "";
                     $checked = '';
-                    $disabled = '';
-                    $saved_val_field = 'test';
+                    $disabled = 'disabled';
                     if (isset($form_data[0][$v.'-tick'])) {
                            $saved_val = $saved_mail_tags[0][$v];
                            $checked = "checked";
-                    } else {
-                        $disabled =  'disabled';
-                    }
+                           $disabled =  '';
+                    } 
             
                     $placeholder = preg_replace('/[\\_]|\\s+/', '-', $v);
                     if (isset($form_data[0][$v])) {
-                           $saved_val_field = $saved_mail_tags[0][$v];
+                           $saved_val_field = $v;
                     } else {
                         $saved_val_field =  $placeholder;
                     }
@@ -492,7 +507,7 @@ class Gs_Connector_Service
 
     <td class="gs-r-pad">
       <input type="text" id="gs-<?php echo $v; ?>" <?php echo $disabled; ?> name="cf7-gs[<?php echo $v; ?>]"
-        value="<?php echo $saved_val_field ?>"
+        value="<?php echo $saved_val_field; ?>"
         placeholder="<?php echo $placeholder; ?>">
     </td>
   </tr>
@@ -548,9 +563,11 @@ class Gs_Connector_Service
         $tags_count = count($this->special_mail_tags);
         $num_of_cols = 1;
         ?>
-<h2><span class="gs-info">
-        <?php echo esc_html(__('Map special mail tags with custom header name and save automatically to google sheet. ', 'gsconnector')); ?>
-  </span></h2>
+<h2>
+  <!-- <span class="gs-info"> -->
+        <!-- <?php echo esc_html(__('Map special mail tags with custom header name and save automatically to google sheet. ', 'gsconnector')); ?> -->
+  <!-- </span> -->
+</h2>
 <table class="gs-field-list special">
         <?php
             
